@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { TodoList } from './shared/interface';
+import { ApicallService } from './apicall.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,34 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'to-do-unfinished';
+  title = 'to-do-list-api';
+  TodoList: TodoList[] = [] ;
+  error: string = '';
+  constructor(private ApicallService: ApicallService) { }
+
+  ngOnInit(): void {
+    this.getTodoList();
+  }
+
+  userInputtedData: TodoList = {
+    title: "",
+    description: "",
+    status: "",
+  }
+
+  getTodoList(): void {
+    this.ApicallService.getTodoList().subscribe(
+      (data) => {this.TodoList = data},
+      (error) => {this.error = error.message}
+    );
+  }
+
+  add(userInputtedData: TodoList) {
+    this.TodoList.push(userInputtedData);
+  }
+
+  delete(item: TodoList) {
+    const i = this.TodoList.indexOf(item);
+    this.TodoList.splice(i,1);
+  }
 }
